@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 // ── API ─────────────────────────────────────────────────────
-const BASE = "http://localhost:3001/api";
+const BASE = "http://10.174.2.193:3001/api";
 const getToken = () => localStorage.getItem("cf_token");
 const apiHeaders = () => ({ "Content-Type": "application/json", ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) });
 const req = async (method, path, body) => {

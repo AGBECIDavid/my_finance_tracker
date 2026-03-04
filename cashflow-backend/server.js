@@ -9,7 +9,7 @@ const app        = express();
 const PORT       = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || "cashflow_secret_change_moi_en_prod";
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 // ── Base de données ──────────────────────────────────────────
@@ -178,6 +178,6 @@ app.delete("/api/categories/:id", auth, (req, res) => {
   res.json({ success: true });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Cashflow API → http://localhost:${PORT}\n`);
 });
