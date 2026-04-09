@@ -1,0 +1,73 @@
+// Prisma schema file
+// Documentation: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // SQLite for easy local + online deployment
+  // To switch to PostgreSQL: change provider to "postgresql" and DATABASE_URL
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER - stores accounts
+// ============================================
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // bcrypt hash - NEVER plain text
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations: one user has many categories and transactions
+  categories   Category[]
+  transactions Transaction[]
+}
+
+// ============================================
+// CATEGORY - income/expense categories
+// ============================================
+model Category {
+  id     Int    @id @default(autoincrement())
+  name   String
+  type   String // "INCOME" or "EXPENSE"
+  color  String @default("#6366f1") // hex color for charts
+  icon   String @default("💰")
+
+  // Each category belongs to a user (multi-user isolation)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================
+// TRANSACTION - actual income/expense entries
+// ============================================
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  type        String   // "INCOME" or "EXPENSE"
+  description String
+  date        DateTime @default(now())
+
+  // Each transaction belongs to a user and a category
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([date])
+}
